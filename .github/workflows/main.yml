@@ -27,3 +27,9 @@ jobs:
         with:
           file: "firmware.ino"
           link: "https://arduino.esp8266.com/stable/package_esp8266com_index.json"
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          # Artifact name
+          name: firmware
+          path: /tmp/**/*.elf

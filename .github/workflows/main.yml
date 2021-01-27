@@ -36,6 +36,7 @@ jobs:
       - name: Compile Sketch
         run: |
           arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./Blink/Blink.ino --output-dir /tmp/output/firmware --verbose
+          ls -l /tmp/output/firmware 
 
       - name: Create Release
         id: create_release
@@ -43,8 +44,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: test1
+          release_name: Release test1
           draft: false
           prerelease: false
 

@@ -35,7 +35,7 @@ jobs:
 
       - name: Compile Sketch
         run: |
-          arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./Blink/Blink.ino --verbose
+          arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./Blink/Blink.ino --output /output/firmware/Blink.bin --verbose
 
       - name: Create Release
         id: create_release
@@ -55,6 +55,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: /tmp/**/Blink.ino.elf
-          asset_name: Blink.ino.elf
+          asset_path: /output/firmware/Blink.bin
+          asset_name: Blink.bin
           asset_content_type: application/binary

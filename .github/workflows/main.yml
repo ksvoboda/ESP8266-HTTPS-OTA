@@ -50,7 +50,7 @@ jobs:
         with:
           node-version: 12
         
-      - name: "Automated Version Bump"
+      - name: Automated Version Bump
         id: version-bump
         uses: "phips28/gh-action-bump-version@master"
         with:
@@ -61,7 +61,7 @@ jobs:
       - name: "cat package.json"
         run: cat ./package.json
         
-      - name:  'Output Step'
+      - name: Output Step
         id: version-output
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}

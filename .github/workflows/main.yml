@@ -39,7 +39,7 @@ jobs:
 
       - name: Compile Sketch
         run: |
-          arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./src/firmware.ino --output-dir /tmp/output/firmware --verbose
+          arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./firmware/firmware.ino --output-dir /tmp/output/firmware --verbose
         
       - name: Automated Version Bump
         id: version-bump

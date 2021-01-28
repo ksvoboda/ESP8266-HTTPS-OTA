@@ -41,6 +41,10 @@ jobs:
         run: |
           arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./Blink/Blink.ino --output-dir /tmp/output/firmware --verbose
           ls -l /tmp/output/firmware 
+          
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
       - name: Create Release
         id: create_release
@@ -48,8 +52,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${GITHUB_REF##*/}
-          release_name: Release ${GITHUB_REF##*/}
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: Release ${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: false
 

@@ -42,12 +42,13 @@ jobs:
           arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./Blink/Blink.ino --output-dir /tmp/output/firmware --verbose
           ls -l /tmp/output/firmware 
           
-      - id: get_version
-        uses: battila7/get-version-action@v2
-
-      - run: echo ${{ steps.get_version.outputs.version }}
-
-      - run: echo ${{ steps.get_version.outputs.version-without-v }}
+      - name: "Automated Version Bump"
+        id: version-bump
+        uses: "phips28/gh-action-bump-version@master"
+        with:
+          tag-prefix: ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
         id: create_release
@@ -55,8 +56,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: Release ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ steps.version-bump.outputs.newTag }}
+          release_name: Release ${{ steps.version-bump.outputs.newTag }}
           draft: false
           prerelease: false
 

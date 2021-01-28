@@ -39,16 +39,7 @@ jobs:
 
       - name: Compile Sketch
         run: |
-          arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./Blink/Blink.ino --output-dir /tmp/output/firmware --verbose
-          ls -l /tmp/output/firmware 
-          
-      - name: "cat package.json"
-        run: cat ./package.json
-        
-      - name: "Setup Node.js"
-        uses: "actions/setup-node@v1"
-        with:
-          node-version: 12
+          arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./src/firmware.ino --output-dir /tmp/output/firmware --verbos
         
       - name: Automated Version Bump
         id: version-bump
@@ -57,9 +48,6 @@ jobs:
           tag-prefix: ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "cat package.json"
-        run: cat ./package.json
 
       - name: Create Release
         id: create_release

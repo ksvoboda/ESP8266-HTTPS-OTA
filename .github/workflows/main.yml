@@ -53,6 +53,7 @@ jobs:
         uses: "phips28/gh-action-bump-version@master"
         with:
           tag-prefix: ''
+          target-branch: 'release'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -67,7 +68,7 @@ jobs:
           release_name: Release ${{ steps.version-bump.outputs.newTag }}
           draft: false
           prerelease: false
-
+        
       # Upload all assets to previously created release
       - name: Upload Release Asset
         id: upload-release-asset 

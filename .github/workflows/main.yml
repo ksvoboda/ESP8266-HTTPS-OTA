@@ -6,11 +6,11 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ release ]
     tags:
       - 'v*'
   pull_request:
-    branches: [ main ]
+    branches: [ release ]
     tags:
       - 'v*'
 
@@ -27,9 +27,11 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      # Setup Arduino CLI in workflow
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v1.1.1
 
+      # Install & setup platform
       - name: Install platform
         run: |
           arduino-cli config init
@@ -37,10 +39,23 @@ jobs:
           arduino-cli core update-index
           arduino-cli board listall
 
+      # Install all necessary libraries
+      - run: arduino-cli lib install "ArduinoJson"
+
+      - run: arduino-cli lib install "ESP8266WiFi"
+
+      - run: arduino-cli lib install "ESP8266httpUpdate"
+
+      - run: arduino-cli lib install "WiFiClientSecureBearSSL"
+
+      - run: arduino-cli lib install "WiFiClientSecureAxTLS"
+
+      # Compile the sketch
       - name: Compile Sketch
         run: |
           arduino-cli compile -b esp8266:esp8266:nodemcuv2 ./firmware/firmware.ino --output-dir /tmp/output/firmware --verbose
         
+      # Bump the version of up
       - name: Automated Version Bump
         id: version-bump
         uses: "phips28/gh-action-bump-version@master"
@@ -49,6 +64,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Create empty release with name and version from above
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -60,6 +76,7 @@ jobs:
           draft: false
           prerelease: false
 
+      # Upload all assets to previously created release
       - name: Upload Release Asset
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1

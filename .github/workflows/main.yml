@@ -42,14 +42,6 @@ jobs:
       # Install all necessary libraries
       - run: arduino-cli lib install "ArduinoJson"
 
-      - run: arduino-cli lib install "ESP8266WiFi"
-
-      - run: arduino-cli lib install "ESP8266httpUpdate"
-
-      - run: arduino-cli lib install "WiFiClientSecureBearSSL"
-
-      - run: arduino-cli lib install "WiFiClientSecureAxTLS"
-
       # Compile the sketch
       - name: Compile Sketch
         run: |

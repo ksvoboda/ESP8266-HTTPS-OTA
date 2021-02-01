@@ -6,7 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ release ]
     tags:
       - 'v*'
 
@@ -23,7 +23,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with: 
-          ref: 'main'
+          ref: 'release'
 
       # Setup Arduino CLI in workflow
       - name: Setup Arduino CLI

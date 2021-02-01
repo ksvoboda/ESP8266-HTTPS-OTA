@@ -1,5 +1,5 @@
 {
-  "name": "test",
+  "name": "ESP8266-HTTPS-OTA",
   "version": "1.0.4",
   "description": "",
   "main": "firmware/firmware.ino",
@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ksvoboda/test.git"
+    "url": "git+https://github.com/ksvoboda/ESP8266-HTTPS-OTA.git"
   },
   "author": "Kryštof Svoboda",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ksvoboda/test/issues"
+    "url": "https://github.com/ksvoboda/ESP8266-HTTPS-OTA/issues"
   },
-  "homepage": "https://github.com/ksvoboda/test#readme"
+  "homepage": "https://github.com/ksvoboda/ESP8266-HTTPS-OTA#readme"
 }

@@ -43,9 +43,9 @@ void firmwareUpdate() {
   const char* fwVersion = doc["tag_name"];
   String fullDownloadURL = doc["assets"][0]["browser_download_url"];
 
-  Serial.print("New firmware version: ");
+  Serial.print("Latest firmware version: ");
   Serial.println(fwVersion);
-  Serial.print("New firmware download URL: ");
+  Serial.print("Latest firmware download URL: ");
   Serial.println(fullDownloadURL);
 
   //-------------OTA Update-------------//

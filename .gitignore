@@ -1,1 +1,4 @@
 .vscode/*
+.DS-Store
+firmware/.DS-Store
+.github/.DS-Store

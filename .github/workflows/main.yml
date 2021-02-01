@@ -26,6 +26,8 @@ jobs:
       # Setup Arduino CLI in workflow
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v1.1.1
+        with:
+          version: '0.x'
 
       # Install & setup platform
       - name: Install platform

@@ -1,4 +1,5 @@
 #define USING_AXTLS
+#include "mqtt.h"
 #include <ArduinoJson.h>
 #include "tcpCleanup.h"
 #include <ESP8266WiFi.h>
@@ -12,17 +13,19 @@ const int httpsPort = 443;
 String downloadLink = "https://api.github.com/repos/ksvoboda/ESP8266-HTTPS-OTA/releases/latest";
 const char* token = "062c3bc11cbf5b2c0268ca214b245a0f2ba1fefa";
 
+String currentFWVersion = "v1.0.6";
+
+WiFiClientSecure wifiClientSecure;
+HTTPClient httpClient;
+
 void firmwareUpdate() {
 
   //-------------Getting download URL-------------//
-
-  WiFiClientSecure client;
-  HTTPClient http;
   
-  http.addHeader("Authorization: token", token);
-  http.begin(client, downloadLink);
+  httpClient.addHeader("Authorization: token", token);
+  httpClient.begin(wifiClientSecure, downloadLink);
 
-  int httpCode = http.GET();
+  int httpCode = httpClient.GET();
 
   if (httpCode > 0) {
 
@@ -30,17 +33,17 @@ void firmwareUpdate() {
     
   } else {
     
-    Serial.printf("[HTTPS] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    Serial.printf("[HTTPS] GET... failed, error: %s\n", httpClient.errorToString(httpCode).c_str());
     
   }
 
-  String APIReply = http.getString();
+  String APIReply = httpClient.getString();
   Serial.println("GitHub API reply is: " + APIReply);
 
   DynamicJsonDocument doc(4096);
   deserializeJson(doc, APIReply);
 
-  const char* fwVersion = doc["tag_name"];
+  String fwVersion = doc["tag_name"];
   String fullDownloadURL = doc["assets"][0]["browser_download_url"];
 
   Serial.print("Latest FW version: ");
@@ -50,15 +53,24 @@ void firmwareUpdate() {
 
   //-------------OTA Update-------------//
 
-  client.stop();
+  wifiClientSecure.stop();
   yield();
   tcpCleanup();
-  
-  // OTA HTTPS Update from GitHub latest release
-  ESPhttpUpdate.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
-  auto ret = ESPhttpUpdate.update(client, fullDownloadURL);
 
-  Serial.println("Update failed");
-  Serial.println((int) ret);
+  if(currentFWVersion != fwVersion) {
+
+    Serial.print("updating...");
+    // OTA HTTPS Update from GitHub latest release
+    ESPhttpUpdate.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
+    auto ret = ESPhttpUpdate.update(wifiClientSecure, fullDownloadURL);
+
+    Serial.println("Update failed");
+    Serial.println((int) ret);
+  
+  } else {
+
+    Serial.println("firmware is already up to date.");
+    
+  }
 
 }

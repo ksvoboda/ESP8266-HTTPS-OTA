@@ -32,21 +32,25 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
-  mqttClient.setServer(mqtt_server, mqttPort);
-  mqttClient.setCallback(callback);
+  mqttClient.begin(mqttServer, wifiClient);
+  mqttClient.onMessage(messageReceived);
+
+  connect();
   
   firmwareUpdate();
   
 }
 
 void loop() {
+  
+  mqttClient.loop();
+  
+  delay(10);
 
   if (!mqttClient.connected()) {
     
-    reconnect();
+    connect();
     
   }
-  
-  mqttClient.loop();
   
 }

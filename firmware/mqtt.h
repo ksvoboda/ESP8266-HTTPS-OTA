@@ -1,65 +1,47 @@
 #include <ESP8266WiFi.h>
-#include <PubSubClient.h>
+#include <MQTT.h>
 
-WiFiClient wifiClient;
-PubSubClient mqttClient(wifiClient);
-
-const char* mqtt_server = "192.168.12.131";
+const char* mqttServer = "192.168.12.131";
 const int mqttPort = 1883;
 const char* mqttUser = "guest";
 const char* mqttPassword = "guest";
 
-#define MSG_BUFFER_SIZE  (50)
+WiFiClient wifiClient;
+MQTTClient mqttClient;
 
-void callback(char* topic, byte* payload, unsigned int length) {
+unsigned long lastMillis = 0;
+
+void connect() {
   
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  
-  for (int i = 0; i < length; i++) {
+  Serial.print("checking wifi...");
+  while (WiFi.status() != WL_CONNECTED) {
     
-    Serial.println((char)payload[i]);
+    Serial.print(".");
+    delay(1000);
     
   }
 
-  // Switch on the LED if an 1 was received as first character
-  if ((char)payload[0] == '1') {
+  Serial.print("\nconnecting...");
+  while (!mqttClient.connect("ESP-8266", mqttUser, mqttPassword)) {
     
-    digitalWrite(BUILTIN_LED, LOW);
-    Serial.println("new fw is ready!");
-
-  } else {
-    
-    digitalWrite(BUILTIN_LED, HIGH);
+    Serial.print(".");
+    delay(1000);
     
   }
+
+  Serial.println("\nconnected!");
+
+  mqttClient.subscribe("/hello");
 
 }
 
-void reconnect() {
+void messageReceived(String &topic, String &payload) {
+  
+  Serial.println("incoming: " + topic + " - " + payload);
 
-  while (!mqttClient.connected()) {
-    
-    Serial.print("Attempting MQTT connection...");
-    String clientId = "ESP8266Client-";
-    clientId += String(random(0xffff), HEX);
-
-    if (mqttClient.connect(clientId.c_str(), mqttUser, mqttPassword )) {
-      
-      Serial.println("connected");
-      mqttClient.publish("outTopic", "hello world");
-      mqttClient.subscribe("devices/update");
-      
-    } else {
-      
-      Serial.print("failed, rc=");
-      Serial.print(mqttClient.state());
-      Serial.println(" try again in 5 seconds");
-      delay(5000);
-      
-    }
-    
-  }
+  // Note: Do not use the client in the callback to publish, subscribe or
+  // unsubscribe as it may cause deadlocks when other things arrive while
+  // sending and receiving acknowledgments. Instead, change a global variable,
+  // or push to a queue and handle it in the loop after calling `client.loop()`.
   
 }
